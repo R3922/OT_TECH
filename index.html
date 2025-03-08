@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orden de Trabajo</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="logo-container">
+            <img src="logo.jpg" alt="Logotipo" class="logo">
+        </div>
+
+        <h2>ORDEN DE TRABAJO</h2>
+
+        <!-- Formulario para generar PDF -->
+        <form id="formReporte" style="margin-top: 50px;">
+            <div class="form-group">
+                <label for="fecha_desde">Fecha Desde:</label>
+                <input type="date" id="fecha_desde" name="fecha_desde" required>
+            </div>
+            <div class="form-group">
+                <label for="fecha_hasta">Fecha Hasta:</label>
+                <input type="date" id="fecha_hasta" name="fecha_hasta" required>
+            </div>
+            <button type="button" class="btn-generar-pdf" onclick="generarPDF()">Generar PDF</button>
+        </form>
+
+        <!-- Formulario para guardar la Orden de Trabajo -->
+        <form action="procesar.php" method="POST" id="ordenTrabajoForm">
+            <input type="hidden" name="redirigir" value="true">
+
+
+
+            <!-- DATOS DEL SERVICIO -->
+            <div class="section">
+                <h3>DATOS DEL SERVICIO</h3>
+                <div class="form-group">
+                    <label for="nom_clien">Cliente:</label>
+                    <input type="text" id="nom_clien" name="nom_clien" required>
+                </div>
+                <div class="form-group">
+                    <label for="fech_ing">Fecha de Ingreso:</label>
+                    <input type="date" id="fech_ing" name="fech_ing" required>
+                </div>
+                <div class="form-group">
+                    <label for="resp">Responsable:</label>
+                    <input type="text" id="resp" name="resp" required>
+                </div>
+            </div>
+
+            <!-- DATOS DEL EQUIPO -->
+            <div class="section">
+                <h3>DATOS DEL EQUIPO</h3>
+                <div class="form-group">
+                    <label for="pat">Patente:</label>
+                    <input type="text" id="pat" name="pat" required>
+                </div>
+                <div class="form-group">
+                    <label for="marca">Marca:</label>
+                    <input type="text" id="marca" name="marca" required>
+                </div>
+                <div class="form-group">
+                    <label for="model">Modelo:</label>
+                    <input type="text" id="model" name="model" required>
+                </div>
+                <div class="form-group">
+                    <label for="anio">Año:</label>
+                    <input type="text" id="anio" name="anio" required>
+                </div>
+                <div class="form-group">
+                    <label for="klm">Kilometraje:</label>
+                    <input type="text" id="klm" name="klm" required>
+                </div>
+            </div>
+
+            <!-- MANO DE OBRA MECÁNICA -->
+            <div class="section">
+                <h3>MANO DE OBRA MECÁNICA</h3>
+                <table>
+                    <tr>
+                        <th>Descripción del Trabajo</th>
+                        <th>Tiempo</th>
+                        <th>Unidad</th>
+                        <th>Tarifa</th>
+                        <th>Total</th>
+                    </tr>
+                    <?php for ($i = 0; $i < 4; $i++): ?>
+                    <tr>
+                        <td><input type="text" name="des_tra[]" style="width: 100%;"></td>
+                        <td><input type="number" name="tiempo[]" min="0" step="0.01" style="width: 100%;"></td>
+                        <td>
+                            <select name="und[]" required style="width: 100%;">
+                                <option value="">-- Seleccionar --</option>
+                                <option value="min">Minutos</option>
+                                <option value="hr">Horas</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select name="tarifa[]" style="width: 100%;">
+                                <option value="35000">35,000 CLP</option>
+                                <option value="45000">45,000 CLP</option>
+                            </select>
+                        </td>
+                        <td><input type="text" name="total[]" readonly
+                                style="width: 100%; font-weight: bold; text-align: right;"></td>
+                    </tr>
+                    <?php endfor; ?>
+                </table>
+            </div>
+
+
+
+            <!-- REPUESTOS -->
+            <div class="section">
+                <h3>REPUESTOS</h3>
+                <table>
+                    <tr>
+                        <th>Descripción Repuesto</th>
+                        <th>Cantidad</th>
+                        <th>Precio Unitario</th>
+                        <th>Total</th>
+                    </tr>
+                    <?php for ($i = 0; $i < 4; $i++): ?>
+                    <tr>
+                        <td><input type="text" name="des_repues[]" style="width: 100%;"></td>
+                        <td><input type="number" name="cant_rep[]" min="1" step="1" style="width: 100%;"></td>
+                        <td><input type="number" name="pu_rep[]" min="0" step="0.01" style="width: 100%;"></td>
+                        <td><input type="text" name="total_rep[]" readonly
+                                style="width: 100%; font-weight: bold; text-align: right;"></td>
+                    </tr>
+                    <?php endfor; ?>
+                </table>
+            </div>
+
+            <!-- MATERIALES -->
+            <div class="section">
+                <h3>MATERIALES</h3>
+                <table>
+                    <tr>
+                        <th>Descripción de Material</th>
+                        <th>Cantidad</th>
+                        <th>Precio Unitario</th>
+                        <th>Total</th>
+                    </tr>
+                    <?php for ($i = 1; $i <= 4; $i++): ?>
+                    <tr>
+                        <td><input type="text" name="des_mat[]" style="width: 100%;"></td>
+                        <td><input type="number" name="cant_mat[]" min="1" step="1" style="width: 100%;"></td>
+                        <td><input type="number" name="pu_mat[]" min="0" step="0.01" style="width: 100%;"></td>
+                        <td><input type="text" name="total_mat[]" readonly
+                                style="width: 100%; font-weight: bold; text-align: right;"></td>
+                    </tr>
+                    <?php endfor; ?>
+                </table>
+            </div>
+
+            <!-- RESUMEN DE COSTOS -->
+            <div class="section">
+                <h3>RESUMEN DE COSTOS</h3>
+                <div class="form-group">
+                    <label for="sub_total">SUB TOTAL:</label>
+                    <input type="text" id="sub_total" name="sub_total" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="ut">UT:</label>
+                    <input type="text" id="ut" name="ut" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="iva">IVA:</label>
+                    <input type="text" id="iva" name="iva" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="total">TOTAL:</label>
+                    <input type="text" id="total" name="total" readonly>
+                </div>
+            </div>
+
+            <button type="submit">Guardar Orden</button>
+        </form>
+    </div>
+
+    <script>
+        function generarPDF() {
+            let fechaDesde = document.getElementById("fecha_desde").value;
+            let fechaHasta = document.getElementById("fecha_hasta").value;
+
+            if (fechaDesde === "" || fechaHasta === "") {
+                alert("Por favor, seleccione ambas fechas.");
+                return;
+            }
+            window.open(`generar_pdf.php?fecha_desde=${fechaDesde}&fecha_hasta=${fechaHasta}`, '_blank');
+        }
+    </script>
+
+    <script src="procesar.js" defer></script>
+
+</body>
+
+</html>
+
+
+<script src="index.php" defer></script>
+
